@@ -1,8 +1,9 @@
 import React from 'react'
 import {Route} from 'react-router-dom'
 
+// 其他页面组件
 import Index from '../../pages/Index'
-import List from '../../pages/List'
+import HomeList from '../../pages/HomeList'
 import News from '../../pages/News'
 import Profile from '../../pages/Profile'
 
@@ -29,7 +30,7 @@ export default class extends React.Component {
     return (
       <div>
         <Route path="/home" exact component={Index} />
-        <Route path="/home/list" exact component={List} />
+        <Route path="/home/list" exact component={HomeList} />
         <Route path="/home/news" exact component={News} />
         <Route path="/home/profile" exact component={Profile} />
       </div>
@@ -46,11 +47,10 @@ export default class extends React.Component {
           selectedIcon={<i className={`iconfont icon-${v.icon}`} />}
           selected={this.state.selectedTab === v.path}
           onPress={() => {
-            console.log(this.props)
             this.props.history.push(v.path)
-            this.setState({
-              selectedTab: v.path
-            })
+            // this.setState({
+            //   selectedTab: v.path
+            // })
           }}
           data-seed="logId"
         >
@@ -60,17 +60,22 @@ export default class extends React.Component {
     })
   }
 
+  componentDidUpdate(preProps) {
+    // 当历史路径和现在路径不同时，修改selecteTab，实现tabBar选中
+    if (this.props.location.pathname === preProps.location.pathname) return
+    this.setState({
+      selectedTab: this.props.location.pathname
+    })
+  }
+
   render() {
     return (
-      <div
-        className="tabBar"
-        // style={{position: 'fixed', height: '100%', width: '100%', top: 0}}
-      >
+      <div className="tabBar">
         <TabBar
           unselectedTintColor="#949494"
-          tintColor="#33A3F4"
           barTintColor="white"
           hidden={this.state.hidden}
+          tintColor="#21b97a"
         >
           {// 下方标签栏导航渲染
           this.renderTabBarItem()}
