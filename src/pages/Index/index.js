@@ -1,7 +1,7 @@
 import React from 'react'
 
 import {Link} from 'react-router-dom'
-import {Carousel, Flex} from 'antd-mobile'
+import {Carousel, Flex, Grid} from 'antd-mobile'
 import axios from 'axios'
 
 // 引入导航图片
@@ -24,9 +24,12 @@ export default class extends React.Component {
   state = {
     swiperData: [],
     imgHeight: 176,
-    isSwiperLoading: false
+    isSwiperLoading: false,
+    groupData: [],
+    newsData: []
   }
 
+  // 获取轮播图数据
   async getSwiperData() {
     const res = await axios({
       url: 'http://localhost:8080/home/swiper'
@@ -35,6 +38,26 @@ export default class extends React.Component {
     this.setState({
       swiperData: res.data.body,
       isSwiperLoading: true
+    })
+  }
+
+  // 获取租房小组数据
+  async getGroupData() {
+    const res = await axios({
+      url: 'http://localhost:8080/home/groups?area=AREA%7C88cff55c-aaa4-e2e0'
+    })
+    this.setState({
+      groupData: res.data.body
+    })
+  }
+
+  // 获取最新资讯数据
+  async getNewsData() {
+    const res = await axios({
+      url: 'http://localhost:8080/home/news?area=AREA%7C88cff55c-aaa4-e2e0'
+    })
+    this.setState({
+      newsData: res.data.body
     })
   }
 
@@ -75,8 +98,27 @@ export default class extends React.Component {
     })
   }
 
+  renderGroupItem(v) {
+    return (
+      <Flex justify="between">
+        <div className="group_item_text">
+          <div className="group_item_text_title">{v.title}</div>
+          <div className="group_item_text_info">{v.desc}</div>
+        </div>
+        <img src={`http://localhost:8080${v.imgSrc}`} alt="" />
+      </Flex>
+    )
+  }
+
   componentDidMount() {
+    // 获取轮播图数据
     this.getSwiperData()
+
+    // 获取租房小组数据
+    this.getGroupData()
+
+    // 获取最新资讯数据
+    this.getNewsData()
   }
 
   render() {
@@ -88,10 +130,28 @@ export default class extends React.Component {
             {this.renderSwipers()}
           </Carousel>
         )}
+
         <Flex className="index_nav">
           {/* 主页导航渲染 */}
           {this.renderIndexVan()}
         </Flex>
+
+        {/* 租房小组 */}
+        <div className="group">
+          <Flex className="group_title" justify="between">
+            <h3>租房小组</h3>
+            <p>更多</p>
+          </Flex>
+          <Grid
+            columnNum={2}
+            hasLine={false}
+            activeStyle={true}
+            data={this.state.groupData}
+            itemStyle={{height: '85px'}}
+            // 自定义渲染grid中的内容
+            renderItem={this.renderGroupItem}
+          />
+        </div>
       </div>
     )
   }

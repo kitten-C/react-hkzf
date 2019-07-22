@@ -14,3 +14,53 @@
     color: #333;
   }
 }
+
+.group {
+  padding: 0 10px;
+
+  .group_title {
+    margin: 15px 0px 15px 10px;
+
+    h3 {
+      font-size: 15px;
+    }
+
+    p {
+      color: #787d82;
+    }
+  }
+
+  .am-grid {
+    .am-flexbox {
+      background-color: transparent;
+
+      .am-grid-item {
+        background-color: #fff;
+        margin-bottom: 10px;
+
+        &:first-child {
+          margin-right: 10px;
+        }
+
+        img {
+          width: 55px;
+        }
+
+        .am-grid-item-content {
+          padding: 10px 10px;
+
+          .group_item_text_title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 5px;
+          }
+
+          .group_item_text_info {
+            font-size: 12px;
+            color: #999;
+          }
+        }
+      }
+    }
+  }
+}

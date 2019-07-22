@@ -1,6 +1,15 @@
+body {
+  font-family: 'Microsoft YaHei';
+  color: #333;
+}
+
 * {
   box-sizing: border-box;
+  touch-action: pan-y;
 }
 p {
+  margin: 0;
+}
+h3 {
   margin: 0;
 }
