@@ -6,7 +6,6 @@ import Index from '../../pages/Index'
 import HomeList from '../../pages/HomeList'
 import News from '../../pages/News'
 import Profile from '../../pages/Profile'
-import CityList from '../../pages/CityList'
 
 import './index.scss'
 
@@ -34,7 +33,6 @@ export default class extends React.Component {
         <Route path="/home/list" exact component={HomeList} />
         <Route path="/home/news" exact component={News} />
         <Route path="/home/profile" exact component={Profile} />
-        <Route path="/home/citylist" exact component={CityList} />
       </div>
     )
   }
