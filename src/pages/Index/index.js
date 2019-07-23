@@ -124,6 +124,20 @@ export default class extends React.Component {
   render() {
     return (
       <div>
+        {/* 定位 */}
+        <Flex className="serch_bar" justify="between">
+          <Flex className="serch_bar_left">
+            <div className="location">
+              <span>上海</span>
+              <i className="iconfont icon-arrow" />
+            </div>
+            <div className="location_search">
+              <i className="iconfont icon-seach" />
+              <span>请输入小区或地址</span>
+            </div>
+          </Flex>
+          <i className="iconfont icon-map" />
+        </Flex>
         {/* 数据载入后，再渲染轮播图，解决没有数据时就渲染，不会自动播放的bug */}
         {this.state.isSwiperLoading && (
           <Carousel autoplay={true} infinite>

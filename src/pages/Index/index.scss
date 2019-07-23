@@ -1,3 +1,53 @@
+.serch_bar {
+  position: fixed;
+  top: 25px;
+  z-index: 1;
+  width: 100%;
+  // line-height: 34px;
+
+  .serch_bar_left {
+    height: 34px;
+    background-color: #fff;
+    border-radius: 3px;
+    margin-left: 20px;
+    padding: 0 10px;
+    flex: 1;
+
+    .location {
+      .icon-arrow {
+        font-size: 12px;
+        color: #7f7f80;
+        margin-left: 3px;
+        margin-right: 10px;
+      }
+    }
+
+    .location_search {
+      border-left: solid 1px #e5e5e5;
+      padding-left: 10px;
+
+      .icon-seach {
+        vertical-align: middle;
+        padding: 0 2px 0 8px;
+        color: #9c9fa1;
+        font-size: 15px;
+      }
+
+      span {
+        padding-left: 4px;
+        font-size: 13px;
+        color: #9c9fa1;
+      }
+    }
+  }
+
+  .icon-map {
+    font-size: 25px;
+    color: #fff;
+    padding: 0 10px;
+  }
+}
+
 .index_nav {
   padding: 10px;
   background-color: #fff;
