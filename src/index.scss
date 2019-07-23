@@ -3,6 +3,11 @@ body {
   color: #333;
 }
 
+body,
+html {
+  height: 100%;
+}
+
 * {
   box-sizing: border-box;
   touch-action: pan-y;
@@ -12,4 +17,8 @@ p {
 }
 h3 {
   margin: 0;
+}
+
+#root {
+  height: 100%;
 }
