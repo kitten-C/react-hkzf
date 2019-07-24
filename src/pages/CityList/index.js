@@ -3,6 +3,9 @@ import React from 'react'
 import axios from 'axios'
 
 import {NavBar} from 'antd-mobile'
+import {List} from 'react-virtualized'
+
+import {getCurrentCity} from '../../utils'
 
 import './index.scss'
 
@@ -19,6 +22,26 @@ const formatCityList = res => {
   })
   const cityInitial = Object.keys(cityList).sort()
   return {cityList, cityInitial}
+}
+
+// react-virtualized插件示例代码
+const list = Array.from(new Array(10000)).map((v, i) => {
+  return `假数据 20点58分${i}`
+})
+console.log(list)
+
+function rowRenderer({
+  key, // Unique key within array of rows
+  index, // Index of row within collection
+  isScrolling, // The List is currently being scrolled
+  isVisible, // This row is visible within the List (eg it is not an overscanned row)
+  style // Style object to be applied to row (to position it)
+}) {
+  return (
+    <div key={key} style={style}>
+      {list[index]}
+    </div>
+  )
 }
 
 export default class extends React.Component {
@@ -42,6 +65,13 @@ export default class extends React.Component {
     cityList['hot'] = hotCityRes.data.body
     cityInitial.unshift('hot')
 
+    // 1.3 获取本地城市数据
+    const {label, value} = await getCurrentCity()
+
+    // 1.3.1 热门数据城市添加进数据中
+    cityList['curCity'] = [{label, value}]
+    cityInitial.unshift('#')
+
     console.log(cityList, cityInitial)
   }
 
@@ -58,10 +88,18 @@ export default class extends React.Component {
           className="nvaBar"
           mode="light"
           icon={<i className="iconfont icon-back" />}
-          onLeftClick={() => console.log('onLeftClick')}
+          onLeftClick={() => this.props.history.go(-1)}
         >
           城市选择
         </NavBar>
+        {/* 城市数据渲染 */}
+        <List
+          width={300}
+          height={300}
+          rowCount={list.length}
+          rowHeight={20}
+          rowRenderer={rowRenderer}
+        />
       </div>
     )
   }

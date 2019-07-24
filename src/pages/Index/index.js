@@ -4,6 +4,8 @@ import {Link} from 'react-router-dom'
 import {Carousel, Flex, Grid} from 'antd-mobile'
 import axios from 'axios'
 
+import {getCurrentCity} from '../../utils/index'
+
 // 引入导航图片
 import Nav1 from '../../assets/images/nav-1.png'
 import Nav2 from '../../assets/images/nav-2.png'
@@ -26,7 +28,8 @@ export default class extends React.Component {
     imgHeight: 176,
     isSwiperLoading: false,
     groupData: [],
-    newsData: []
+    newsData: [],
+    curCity: ''
   }
 
   // 获取轮播图数据
@@ -59,6 +62,16 @@ export default class extends React.Component {
     this.setState({
       newsData: res.data.body
     })
+  }
+
+  // 渲染定位城市
+  async getLocationCity() {
+    // 定位城市
+    const {label} = await getCurrentCity()
+    this.setState({
+      curCity: label
+    })
+    // console.log(label)
   }
 
   renderSwipers() {
@@ -119,6 +132,10 @@ export default class extends React.Component {
 
     // 获取最新资讯数据
     this.getNewsData()
+    // console.log(12)s
+
+    // 渲染定位城市
+    this.getLocationCity()
   }
 
   render() {
@@ -127,10 +144,10 @@ export default class extends React.Component {
         {/* 定位 */}
         <Flex className="serch_bar" justify="between">
           <Flex className="serch_bar_left">
-            <div className="location">
-              <span>上海</span>
+            <Link className="location" to="/citylist">
+              <span>{this.state.curCity}</span>
               <i className="iconfont icon-arrow" />
-            </div>
+            </Link>
             <div className="location_search">
               <i className="iconfont icon-seach" />
               <span>请输入小区或地址</span>

@@ -14,7 +14,7 @@ export default class extends React.Component {
         <Route path="/" exact render={() => <Redirect to="/home" />} />
         <Route path="/home" component={Home} />
         <Route path="/map" component={MapCont} />
-        <Route path="/citylist" exact component={CityList} />
+        <Route path="/citylist" component={CityList} />
       </Router>
     )
   }

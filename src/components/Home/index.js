@@ -53,9 +53,7 @@ export default class extends React.Component {
             // })
           }}
           data-seed="logId"
-        >
-          {this.renderContent()}
-        </TabBar.Item>
+        />
       )
     })
   }
@@ -70,16 +68,20 @@ export default class extends React.Component {
 
   render() {
     return (
-      <div className="tabBar">
-        <TabBar
-          unselectedTintColor="#949494"
-          barTintColor="white"
-          hidden={this.state.hidden}
-          tintColor="#21b97a"
-        >
-          {// 下方标签栏导航渲染
-          this.renderTabBarItem()}
-        </TabBar>
+      <div>
+        {/* 路由内容渲染 */}
+        {this.renderContent()}
+        <div className="tabBar">
+          <TabBar
+            unselectedTintColor="#949494"
+            barTintColor="white"
+            hidden={this.state.hidden}
+            tintColor="#21b97a"
+          >
+            {// 下方标签栏导航渲染
+            this.renderTabBarItem()}
+          </TabBar>
+        </div>
       </div>
     )
   }
