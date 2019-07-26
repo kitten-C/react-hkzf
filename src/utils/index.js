@@ -40,4 +40,4 @@ const getCurrentCity = () => {
   }
 }
 
-export {getCurrentCity}
+export {getCurrentCity, getCity, setCity}

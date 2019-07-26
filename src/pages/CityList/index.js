@@ -2,10 +2,10 @@ import React from 'react'
 
 import axios from 'axios'
 
-import {NavBar} from 'antd-mobile'
+import {NavBar, Toast} from 'antd-mobile'
 import {List, AutoSizer} from 'react-virtualized'
 
-import {getCurrentCity} from '../../utils'
+import {getCurrentCity, setCity} from '../../utils'
 
 import './index.scss'
 
@@ -29,6 +29,9 @@ import './index.scss'
 const TITLE_HEIGHT = 36
 // 城市列表高度
 const CITY_HEIGHT = 50
+
+// 有城市数据的城市
+const hasCity = ['北京', '上海', '广州', '深圳']
 
 // 处理所有城市数据
 const formatCityList = res => {
@@ -113,7 +116,7 @@ export default class extends React.Component {
     return TITLE_HEIGHT + CITY_HEIGHT * list.length
   }
 
-  // 插件中的方法
+  // 插件中的方法 城市数据渲染
   rowRenderer = ({key, index, style}) => {
     const {cityInitial, cityList} = this.state
 
@@ -124,7 +127,12 @@ export default class extends React.Component {
       <div key={key} style={style} className="city">
         <div className="title">{formatCityIndex(initial)}</div>
         {list.map(v => (
-          <div className="name" key={v.label}>
+          <div
+            className="name"
+            key={v.label}
+            onClick={() => this.showToast(v)}
+            mask="false"
+          >
             {v.label}
           </div>
         ))}
@@ -157,9 +165,15 @@ export default class extends React.Component {
 
   // 点击右侧索引
   goCityList = i => {
-    console.log(i)
     this.listRef.current.scrollToRow(i)
-    // console.log(this.listRef.current)
+  }
+
+  // 点击城市，修改城市定位，没有数据的城市弹框提示
+  showToast = ({label, value}) => {
+    if (hasCity.indexOf(label) === -1)
+      return Toast.info('无此城市数据', 1, null, false)
+    setCity({label, value})
+    this.props.history.go(-1)
   }
 
   async componentDidMount() {
