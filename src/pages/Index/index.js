@@ -153,7 +153,10 @@ export default class extends React.Component {
               <span>请输入小区或地址</span>
             </div>
           </Flex>
-          <i className="iconfont icon-map" />
+          <i
+            className="iconfont icon-map"
+            onClick={() => this.props.history.push('/map')}
+          />
         </Flex>
         {/* 数据载入后，再渲染轮播图，解决没有数据时就渲染，不会自动播放的bug */}
         {this.state.isSwiperLoading && (

@@ -2,10 +2,10 @@ import React from 'react'
 import {Route} from 'react-router-dom'
 
 // 其他页面组件
-import Index from '../../pages/Index'
-import HomeList from '../../pages/HomeList'
-import News from '../../pages/News'
-import Profile from '../../pages/Profile'
+import Index from '../Index'
+import HomeList from '../HomeList'
+import News from '../News'
+import Profile from '../Profile'
 
 import './index.scss'
 
