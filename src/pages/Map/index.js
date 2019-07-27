@@ -32,6 +32,7 @@ export default class extends React.Component {
       label,
       point => {
         if (point) {
+          // console.log(point)
           // 根据point渲染地图，后面的值为放大比例
           map.centerAndZoom(point, 11)
           // 添加比例尺
@@ -41,24 +42,6 @@ export default class extends React.Component {
 
           // *渲染覆盖物
           this.renderOverLays(value)
-
-          var opts = {
-            position: point, // 指定文本标注所在的地理位置
-            offset: new BMap.Size(-35, -35) //设置文本偏移量
-          }
-          var label = new BMap.Label(
-            '欢迎使用百度地图，这是一个简单的文本标注哦~',
-            opts
-          ) // 创建文本标注对象
-          label.setStyle(labelStyle)
-
-          label.setContent(`
-          <div class="${styles.bubble}">
-            <p class="${styles.name}">浦东新区</p>
-            <p>388套</p>
-          </div>
-          `)
-          map.addOverlay(label)
         }
       },
       label
@@ -70,20 +53,27 @@ export default class extends React.Component {
     const res = await axios.get('http://localhost:8080/area/map', {
       params: {id}
     })
-    console.log(res)
+
+    // *计算类型和缩放级别
+    const {nextZoom, type} = this.getTypeAndZoom()
+
     // *创建覆盖物
-    this.createOverlays(res.data.body)
+    const data = res.data.body
+
+    this.createOverlays(data, nextZoom, type)
   }
 
   // 创建覆盖物
   // 逻辑：verlayShape为circle创建区、镇覆盖物，rect创建小区覆盖物
-  createOverlays() {
-    if (this.verlayShape === 'circle') {
+  createOverlays(data, nextZoom, type) {
+    if (type === 'circle') {
       // *创建区、镇覆盖物
-      this.createCircle()
+      data.forEach(v => {
+        this.createCircle(v, nextZoom)
+      })
     } else {
       // *创建小区覆盖物
-      this.createRect()
+      this.createRect(data, nextZoom)
     }
   }
 
@@ -93,7 +83,7 @@ export default class extends React.Component {
   // 小区 -> 15 ，范围：>=14 <16
   getTypeAndZoom() {
     // 调用getZoom方法获取当前缩放
-    const zoom = map.getZoom()
+    const zoom = this.map.getZoom()
     let type, nextZoom
     if (zoom >= 10 && zoom < 12) {
       nextZoom = 13
@@ -108,7 +98,33 @@ export default class extends React.Component {
   }
 
   // 创建区、镇覆盖物
-  createCircle() {}
+  createCircle(
+    {
+      value,
+      coord: {latitude, longitude}
+    },
+    nextZoom
+  ) {
+    const point = new BMap.Point(latitude, latitude)
+    console.log(point)
+
+    const opts = {
+      position: point, // 指定文本标注所在的地理位置
+      offset: new BMap.Size(-35, -35) //设置文本偏移量
+    }
+    const label = new BMap.Label(
+      '欢迎使用百度地图，这是一个简单的文本标注哦~',
+      opts
+    ) // 创建文本标注对象
+    label.setStyle(labelStyle)
+    label.setContent(`
+          <div class="${styles.bubble}">
+            <p class="${styles.name}">浦东新区</p>
+            <p>388套</p>
+          </div>
+          `)
+    this.map.addOverlay(label)
+  }
 
   // 创建小区覆盖物
   createRect() {}
