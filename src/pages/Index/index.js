@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom'
 import {Carousel, Flex, Grid} from 'antd-mobile'
 import axios from 'axios'
 
-import {getCurrentCity} from '../../utils/index'
+import {getCurrentCity, BASE_URL} from '../../utils/index'
 
 // 引入导航图片
 import Nav1 from '../../assets/images/nav-1.png'
@@ -86,7 +86,7 @@ export default class extends React.Component {
         }}
       >
         <img
-          src={`http://localhost:8080${v.imgSrc}`}
+          src={`${BASE_URL}${v.imgSrc}`}
           alt=""
           style={{width: '100%', verticalAlign: 'top'}}
           onLoad={() => {
@@ -118,7 +118,7 @@ export default class extends React.Component {
           <div className="group_item_text_title">{v.title}</div>
           <div className="group_item_text_info">{v.desc}</div>
         </div>
-        <img src={`http://localhost:8080${v.imgSrc}`} alt="" />
+        <img src={`${BASE_URL}${v.imgSrc}`} alt="" />
       </Flex>
     )
   }
@@ -158,6 +158,7 @@ export default class extends React.Component {
             onClick={() => this.props.history.push('/map')}
           />
         </Flex>
+
         {/* 数据载入后，再渲染轮播图，解决没有数据时就渲染，不会自动播放的bug */}
         {this.state.isSwiperLoading && (
           <Carousel autoplay={true} infinite>
