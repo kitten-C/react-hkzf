@@ -1,0 +1,18 @@
+.header {
+  padding: 8px 10px;
+}
+
+.listSearch {
+  position: static;
+
+  :global {
+    .am-flexbox {
+      height: 30px;
+      margin-left: 10px;
+    }
+    .icon-map {
+      color: #00ae66;
+      padding-right: 0;
+    }
+  }
+}

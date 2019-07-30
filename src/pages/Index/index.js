@@ -2,10 +2,13 @@ import React from 'react'
 
 import {Link} from 'react-router-dom'
 import {Carousel, Flex, Grid} from 'antd-mobile'
-import axios from 'axios'
 
-import {getCurrentCity, BASE_URL} from '../../utils/index'
+import {getCurrentCity, BASE_URL, API} from '../../utils/index'
 
+// 引入搜索导航
+import SearchHeader from '../../components/SearchHeader'
+
+// console.log(API)
 // 引入导航图片
 import Nav1 from '../../assets/images/nav-1.png'
 import Nav2 from '../../assets/images/nav-2.png'
@@ -34,10 +37,10 @@ export default class extends React.Component {
 
   // 获取轮播图数据
   async getSwiperData() {
-    const res = await axios({
-      url: 'http://localhost:8080/home/swiper'
-    })
-    // console.log(res.data.body)
+    // const res = await axios({
+    //   url: 'http://localhost:8080/home/swiper'
+    // })
+    const res = await API.get('/home/swiper')
     this.setState({
       swiperData: res.data.body,
       isSwiperLoading: true
@@ -46,7 +49,7 @@ export default class extends React.Component {
 
   // 获取租房小组数据
   async getGroupData() {
-    const res = await axios({
+    const res = await API({
       url: 'http://localhost:8080/home/groups?area=AREA%7C88cff55c-aaa4-e2e0'
     })
     this.setState({
@@ -56,7 +59,7 @@ export default class extends React.Component {
 
   // 获取最新资讯数据
   async getNewsData() {
-    const res = await axios({
+    const res = await API({
       url: 'http://localhost:8080/home/news?area=AREA%7C88cff55c-aaa4-e2e0'
     })
     this.setState({
@@ -71,7 +74,6 @@ export default class extends React.Component {
     this.setState({
       curCity: label
     })
-    // console.log(label)
   }
 
   renderSwipers() {
@@ -142,7 +144,7 @@ export default class extends React.Component {
     return (
       <div>
         {/* 定位 */}
-        <Flex className="serch_bar" justify="between">
+        {/* <Flex className="serch_bar" justify="between">
           <Flex className="serch_bar_left">
             <Link className="location" to="/citylist">
               <span>{this.state.curCity}</span>
@@ -157,20 +159,18 @@ export default class extends React.Component {
             className="iconfont icon-map"
             onClick={() => this.props.history.push('/map')}
           />
-        </Flex>
-
+        </Flex> */}
+        <SearchHeader curCity={this.state.curCity} />
         {/* 数据载入后，再渲染轮播图，解决没有数据时就渲染，不会自动播放的bug */}
         {this.state.isSwiperLoading && (
           <Carousel autoplay={true} infinite>
             {this.renderSwipers()}
           </Carousel>
         )}
-
         <Flex className="index_nav">
           {/* 主页导航渲染 */}
           {this.renderIndexVan()}
         </Flex>
-
         {/* 租房小组 */}
         <div className="group">
           <Flex className="group_title" justify="between">
