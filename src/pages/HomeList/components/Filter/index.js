@@ -7,6 +7,7 @@ import FilterPicker from '../FilterPicker'
 import FilterMore from '../FilterMore'
 
 import styles from './index.module.css'
+import {async} from 'q'
 
 const titleSelectedStatus = {
   area: false,
@@ -14,29 +15,58 @@ const titleSelectedStatus = {
   price: false,
   more: false
 }
+const defaultFilterResult = {
+  area: ['area', 'null'],
+  mode: ['null'],
+  price: ['null'],
+  more: ['null']
+}
 export default class Filter extends Component {
   state = {
     titleSelectedStatus,
     openType: '',
     filterData: {},
-    defaultFilterResult: {
-      area: false,
-      mode: false,
-      price: false,
-      more: false
-    }
+    defaultFilterResult
   }
 
-  // 点击标题高亮
-  changeTitleSelected = type => {
+  // 点击标题
+  clickTitle = (type, boolean) => {
+    Object.keys(defaultFilterResult).forEach(v => this.changeDefault(v))
+
+    this.changeTitleSelected(type, boolean)
+
     this.setState({
-      titleSelectedStatus: {
-        ...titleSelectedStatus,
-        [type]: true
-      },
       openType: type
     })
   }
+
+  // 改变标题高亮
+  changeTitleSelected = (type, boolean) => {
+    console.log('修改标题高亮', type, boolean)
+    setTimeout(() => {
+      this.setState({
+        titleSelectedStatus: {
+          ...this.state.titleSelectedStatus,
+          [type]: boolean
+        }
+      })
+    }, 0)
+  }
+
+  // 修改默认值后高亮
+  changeDefault = (openType = this.state.openType) => {
+    const {defaultFilterResult: newFilterResult} = this.state
+    if (!newFilterResult[openType]) {
+      return console.log(newFilterResult)
+    }
+    let result = newFilterResult[openType].every(
+      (v, i) =>
+        newFilterResult[openType][i] === defaultFilterResult[openType][i]
+    )
+
+    this.changeTitleSelected(openType, !result)
+  }
+
   // 打开遮罩层
   openMask = () => {
     const {openType} = this.state
@@ -46,15 +76,38 @@ export default class Filter extends Component {
 
   // 关闭遮罩层
   closeMask = () => {
+    this.changeDefault()
     this.setState({
       openType: ''
     })
   }
 
+  // 取消按钮
+  onCancel = () => {
+    this.closeMask()
+  }
+
+  // 确认按钮
+  onSave = async v => {
+    await this.changeDefaultFilterResult(v)
+    this.closeMask()
+  }
+
+  // 修改默认值
+  changeDefaultFilterResult = v => {
+    const {defaultFilterResult, openType} = this.state
+    this.setState({
+      defaultFilterResult: {
+        ...defaultFilterResult,
+        [openType]: v
+      }
+    })
+  }
+
   // 渲染前三个菜单
   renderPicker = () => {
-    const {openType} = this.state
-    const {area, subway, rentType, price} = this.state.filterData
+    const {openType, defaultFilterResult, filterData} = this.state
+    const {area, subway, rentType, price} = filterData
     if (openType === '' || openType === 'more') return
     let data = []
     let cols = 1
@@ -73,7 +126,30 @@ export default class Filter extends Component {
       default:
         break
     }
-    return <FilterPicker data={data} cols={cols} />
+    return (
+      <FilterPicker
+        key={this.state.openType}
+        data={data}
+        cols={cols}
+        defaultValue={defaultFilterResult[openType]}
+        onSave={this.onSave}
+        changeDefault={this.changeDefault}
+        onCancel={this.onCancel}
+      />
+    )
+  }
+
+  // 渲染最后一个菜单
+  renderMore = () => {
+    const {openType, filterData} = this.state
+    const {roomType, oriented, floor, characteristic} = filterData
+    const data = {roomType, oriented, floor, characteristic}
+
+    if (openType === 'more')
+      return (
+        <FilterMore onCancel={this.onCancel} onSave={this.onSave} data={data} />
+      )
+    return null
   }
 
   // 获取菜单数据
@@ -105,13 +181,13 @@ export default class Filter extends Component {
           {/* 标题栏 */}
           <FilterTitle
             titleSelectedStatus={this.state.titleSelectedStatus}
-            changeTitleSelected={this.changeTitleSelected}
+            clickTitle={this.clickTitle}
           />
           {/* 前三个菜单对应的内容： */}
           {this.renderPicker()}
 
           {/* 最后一个菜单对应的内容： */}
-          {/* <FilterMore /> */}
+          {this.renderMore()}
         </div>
       </div>
     )

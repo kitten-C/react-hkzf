@@ -12,10 +12,7 @@ const titleList = [
   {title: '筛选', type: 'more'}
 ]
 
-export default function FilterTitle({
-  titleSelectedStatus,
-  changeTitleSelected
-}) {
+export default function FilterTitle({titleSelectedStatus, clickTitle}) {
   // 渲染标题
   const renderTitle = () => {
     return titleList.map(v => (
@@ -26,7 +23,7 @@ export default function FilterTitle({
             titleSelectedStatus[v.type] ? styles.selected : ''
           ].join(' ')}
           onClick={() => {
-            changeTitleSelected(v.type)
+            clickTitle(v.type, true)
           }}
         >
           <span>{v.title}</span>
