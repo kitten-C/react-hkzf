@@ -7,7 +7,6 @@ import FilterPicker from '../FilterPicker'
 import FilterMore from '../FilterMore'
 
 import styles from './index.module.css'
-import {async} from 'q'
 
 const titleSelectedStatus = {
   area: false,
@@ -19,7 +18,7 @@ const defaultFilterResult = {
   area: ['area', 'null'],
   mode: ['null'],
   price: ['null'],
-  more: ['null']
+  more: []
 }
 export default class Filter extends Component {
   state = {
@@ -42,15 +41,14 @@ export default class Filter extends Component {
 
   // 改变标题高亮
   changeTitleSelected = (type, boolean) => {
-    console.log('修改标题高亮', type, boolean)
-    setTimeout(() => {
-      this.setState({
-        titleSelectedStatus: {
-          ...this.state.titleSelectedStatus,
-          [type]: boolean
-        }
-      })
-    }, 0)
+    // setTimeout(() => {
+    this.setState((state, props) => ({
+      titleSelectedStatus: {
+        ...state.titleSelectedStatus,
+        [type]: boolean
+      }
+    }))
+    // }, 0)
   }
 
   // 修改默认值后高亮
@@ -141,13 +139,18 @@ export default class Filter extends Component {
 
   // 渲染最后一个菜单
   renderMore = () => {
-    const {openType, filterData} = this.state
+    const {openType, filterData, defaultFilterResult} = this.state
     const {roomType, oriented, floor, characteristic} = filterData
     const data = {roomType, oriented, floor, characteristic}
 
     if (openType === 'more')
       return (
-        <FilterMore onCancel={this.onCancel} onSave={this.onSave} data={data} />
+        <FilterMore
+          onCancel={this.onCancel}
+          onSave={this.onSave}
+          data={data}
+          defaultValue={defaultFilterResult[openType]}
+        />
       )
     return null
   }
