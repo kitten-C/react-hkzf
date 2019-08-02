@@ -41,14 +41,12 @@ export default class Filter extends Component {
 
   // 改变标题高亮
   changeTitleSelected = (type, boolean) => {
-    // setTimeout(() => {
-    this.setState((state, props) => ({
+    this.setState(state => ({
       titleSelectedStatus: {
         ...state.titleSelectedStatus,
         [type]: boolean
       }
     }))
-    // }, 0)
   }
 
   // 修改默认值后高亮
@@ -89,6 +87,7 @@ export default class Filter extends Component {
   onSave = async v => {
     await this.changeDefaultFilterResult(v)
     this.closeMask()
+    this.props.searchHouseList(this.state.defaultFilterResult)
   }
 
   // 修改默认值
@@ -170,6 +169,8 @@ export default class Filter extends Component {
   }
 
   componentDidMount() {
+    // 把筛选数据发送给hoseList
+    this.props.searchHouseList(this.state.defaultFilterResult)
     this.getFilterData()
   }
 

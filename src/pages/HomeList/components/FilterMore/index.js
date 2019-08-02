@@ -45,7 +45,6 @@ export default class FilterMore extends Component {
 
   // 判断标签是否选中
   isSelected = value => {
-    console.log(this.state.selectedData)
     return this.state.selectedData.includes(value)
   }
 

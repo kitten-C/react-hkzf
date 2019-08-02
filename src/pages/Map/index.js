@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {getCurrentCity} from '../../utils'
+import {getCurrentCity, loading, closeLoading} from '../../utils'
 
 // 导入头部
 import NavHeader from '../../components/NavHeader'
@@ -58,6 +58,7 @@ export default class extends React.Component {
 
   // 渲染覆盖物
   async renderOverLays(id) {
+    loading()
     const res = await axios.get('http://localhost:8080/area/map', {
       params: {id}
     })
@@ -69,6 +70,7 @@ export default class extends React.Component {
     const data = res.data.body
 
     this.createOverlays(data, nextZoom, type)
+    closeLoading()
   }
 
   // 创建覆盖物
@@ -186,6 +188,7 @@ export default class extends React.Component {
   }
 
   async getHoseList(cityId) {
+    loading()
     console.log(cityId)
     const res = await axios.get('http://localhost:8080/houses', {
       params: {
@@ -197,6 +200,7 @@ export default class extends React.Component {
       houseList: res.data.body.list,
       isShowHouseList: true
     })
+    closeLoading()
   }
 
   // 渲染小区里面的房源列表
