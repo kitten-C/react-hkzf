@@ -122,7 +122,6 @@ export default class extends React.Component {
   // 插件中的方法 城市数据渲染
   rowRenderer = ({key, index, style}) => {
     const {cityInitial, cityList} = this.state
-
     const initial = cityInitial[index]
     const list = cityList[initial]
     // console.log(list)

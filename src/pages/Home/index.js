@@ -28,12 +28,12 @@ export default class extends React.Component {
 
   renderContent() {
     return (
-      <div>
+      <>
         <Route path="/home" exact component={Index} />
         <Route path="/home/list" exact component={HomeList} />
         <Route path="/home/news" exact component={News} />
         <Route path="/home/profile" exact component={Profile} />
-      </div>
+      </>
     )
   }
 
@@ -68,7 +68,7 @@ export default class extends React.Component {
 
   render() {
     return (
-      <div>
+      <>
         {/* 路由内容渲染 */}
         {this.renderContent()}
         <div className="tabBar">
@@ -82,7 +82,7 @@ export default class extends React.Component {
             this.renderTabBarItem()}
           </TabBar>
         </div>
-      </div>
+      </>
     )
   }
 }

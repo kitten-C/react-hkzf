@@ -5,6 +5,9 @@ import {getCurrentCity, loading, closeLoading} from '../../utils'
 // 导入头部
 import NavHeader from '../../components/NavHeader'
 
+// 导入城市列表
+import HouseItem from '../../components/HouseItem'
+
 import styles from './index.module.scss'
 import axios from 'axios'
 
@@ -203,38 +206,10 @@ export default class extends React.Component {
     closeLoading()
   }
 
-  // 渲染小区里面的房源列表
-  renderHouseList() {
-    return this.state.houseList.map(item => (
-      <div className={styles.house} key={item.houseCode}>
-        <div className={styles.imgWrap}>
-          <img
-            className={styles.img}
-            src={`http://localhost:8080${item.houseImg}`}
-            alt=""
-          />
-        </div>
-        <div className={styles.content}>
-          <h3 className={styles.title}>{item.title}</h3>
-          <div className={styles.desc}>{item.desc}</div>
-          <div>
-            {item.tags.map((tag, index) => {
-              const tagClass = `tag${index > 2 ? '3' : index + 1}` // tag1 or tag2 or tag3
-              return (
-                <span
-                  key={index}
-                  className={[styles.tag, styles[tagClass]].join(' ')}
-                >
-                  {tag}
-                </span>
-              )
-            })}
-          </div>
-          <div className={styles.price}>
-            <span className={styles.priceNum}>{item.price}</span> 元/月
-          </div>
-        </div>
-      </div>
+  renderHouseList = () => {
+    console.log(this.state.houseList)
+    return this.state.houseList.map((item, i) => (
+      <HouseItem item={item} key={i} />
     ))
   }
 
@@ -250,29 +225,28 @@ export default class extends React.Component {
       <div className={styles.map}>
         <NavHeader>地图</NavHeader>
         <div id="container" />
-        <div className={styles.houseItems}>
-          {/* 房源列表结构 */}
-          {/* 如果要展示列表结构，只需要添加 styles.show 类名即可 */}
-          {/* <div
+
+        {/* 房源列表结构 */}
+        {/* 如果要展示列表结构，只需要添加 styles.show 类名即可 */}
+        {/* <div
           className={[
             styles.houseList,
             this.state.isShowHouseList ? styles.show : ''
           ].join(' ')}
         > */}
-          <div
-            className={[
-              styles.houseList,
-              this.state.isShowHouseList ? styles.show : ''
-            ].join(' ')}
-          >
-            <div className={styles.titleWrap}>
-              <h1 className={styles.listTitle}>房屋列表</h1>
-              <a className={styles.titleMore} href="/house/list">
-                更多房源
-              </a>
-            </div>
-            <div className={styles.houseItems}>{this.renderHouseList()}</div>
+        <div
+          className={[
+            styles.houseList,
+            this.state.isShowHouseList ? styles.show : ''
+          ].join(' ')}
+        >
+          <div className={styles.titleWrap}>
+            <h1 className={styles.listTitle}>房屋列表</h1>
+            <a className={styles.titleMore} href="/house/list">
+              更多房源
+            </a>
           </div>
+          <div className={styles.houseItems}>{this.renderHouseList()}</div>
         </div>
       </div>
     )
