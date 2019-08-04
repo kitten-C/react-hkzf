@@ -18,10 +18,10 @@ export default class FilterPicker extends Component {
   componentDidMount() {}
 
   render() {
-    const {data, cols, onSave, onCancel} = this.props
+    const {data, cols, onSave, onCancel, style} = this.props
     const {defaultValue} = this.state
     return (
-      <>
+      <div style={style}>
         {/* 选择器组件： */}
         <PickerView
           data={data}
@@ -38,7 +38,7 @@ export default class FilterPicker extends Component {
           }}
           onCancel={onCancel}
         />
-      </>
+      </div>
     )
   }
 }

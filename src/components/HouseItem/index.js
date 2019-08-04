@@ -4,9 +4,15 @@ import styles from './index.module.scss'
 
 import {BASE_URL} from '../../utils'
 
-const HouseItem = ({item}) => {
+const HouseItem = ({item, style, onClick}) => {
   return (
-    <div className={styles.house}>
+    <div
+      className={styles.house}
+      style={style}
+      onClick={() => {
+        onClick(item.houseCode)
+      }}
+    >
       <div className={styles.imgWrap}>
         <img
           className={styles.img}

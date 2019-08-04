@@ -1,6 +1,9 @@
 import React from 'react'
 
-import {Flex} from 'antd-mobile'
+// 引入吸顶功能
+import Sticky from '../../components/Sticky'
+
+import {Flex, Toast} from 'antd-mobile'
 import {
   List,
   AutoSizer,
@@ -23,25 +26,40 @@ import styles from './index.module.scss'
 
 export default class extends React.Component {
   state = {
-    currentCity: {},
-    houseList: []
+    houseList: [],
+    count: 0
   }
+  // 这是默认值
+  label = '上海'
+  filter = {}
   // 从filter获取数据
+  onFilter = filter => {
+    this.filter = filter
+
+    this.searchHouseList()
+  }
 
   // 处理过滤数据
-  handleFilterData = async (v, start = 1, end = 20) => {
-    const {area, mode, price, more} = v
-    const {value} = await getCurrentCity()
-
+  handleFilterData = (start = 1, end = 20) => {
+    const {area, mode, price, more} = this.filter
+    let filterData
+    if (!area) {
+      return (filterData = {
+        cityId: this.value,
+        start,
+        end
+      })
+    }
     let areaCity
+
     if (area.length === 2) {
       areaCity = area[1]
     } else {
       areaCity = area[2] === 'null' ? area[1] : area[2]
     }
 
-    const filterData = {
-      cityId: value,
+    filterData = {
+      cityId: this.value,
       [area[0]]: areaCity,
       rentType: mode[0],
       price: price[0],
@@ -53,8 +71,12 @@ export default class extends React.Component {
   }
 
   // 获取城市列表
-  searchHouseList = async v => {
-    const filterData = await this.handleFilterData(v)
+  searchHouseList = async (start, end) => {
+    // console.log(start, end)
+    // 加载提示
+    // Toast.loading('Loading...', 0)
+
+    const filterData = this.handleFilterData(start, end)
     const res = await API.get('/houses', {
       params: {
         ...filterData
@@ -62,13 +84,26 @@ export default class extends React.Component {
     })
     // console.log(res.data.body)
     this.setState({
-      houseList: res.data.body
+      houseList: res.data.body.list,
+      count: res.data.body.count
     })
+    Toast.hide()
   }
 
   rowRenderer = ({key, index, style}) => {
     const {houseList} = this.state
-    return <HouseList item={houseList.list[index]} key={key} style={style} />
+
+    if (!houseList[index]) {
+      return <div key={key}>1213</div>
+    }
+    return (
+      <HouseList
+        item={houseList[index]}
+        key={key}
+        style={style}
+        onClick={code => this.props.history.push(`/detail/${code}`)}
+      />
+    )
   }
 
   isRowLoaded = ({index}) => {
@@ -76,22 +111,32 @@ export default class extends React.Component {
   }
 
   loadMoreRows = ({startIndex, stopIndex}) => {
-    return fetch(
-      `path/to/api?startIndex=${startIndex}&stopIndex=${stopIndex}`
-    ).then(response => {
-      // Store response data in list...
+    return new Promise(async resolve => {
+      const filterData = this.handleFilterData(startIndex, stopIndex)
+
+      const res = await API.get('/houses', {
+        params: {
+          ...filterData
+        }
+      })
+      console.log(res)
+      this.setState({
+        houseList: [...this.state.houseList, ...res.data.body.list],
+        count: res.data.body.count
+      })
+      resolve()
     })
   }
 
   renderHouseList = () => {
-    const {houseList} = this.state
-    console.log(houseList)
+    const {houseList, count} = this.state
     if (houseList.length === 0) return
     return (
       <InfiniteLoader
         isRowLoaded={this.isRowLoaded}
         loadMoreRows={this.loadMoreRows}
-        rowCount={houseList.count}
+        rowCount={count}
+        minimumBatchSize={20}
       >
         {({onRowsRendered, registerChild}) => (
           <WindowScroller>
@@ -106,11 +151,9 @@ export default class extends React.Component {
                     onRowsRendered={onRowsRendered}
                     ref={registerChild}
                     height={height}
-                    rowCount={houseList.count}
+                    rowCount={count}
                     rowHeight={120}
                     rowRenderer={this.rowRenderer}
-                    // ref={this.listRef}
-                    scrollToAlignment="start"
                   />
                 )}
               </AutoSizer>
@@ -122,13 +165,12 @@ export default class extends React.Component {
   }
 
   async componentDidMount() {
-    const currentCity = await getCurrentCity()
-    this.setState({
-      currentCity
-    })
+    const {label, value} = await getCurrentCity()
+    this.label = label
+    this.value = value
+    this.searchHouseList()
   }
   render() {
-    const {houseList, currentCity} = this.state
     return (
       <>
         <Flex className={styles.header}>
@@ -136,12 +178,11 @@ export default class extends React.Component {
             className="iconfont icon-back"
             onClick={() => this.props.history.go(-1)}
           />
-          <SearchHeader
-            curCity={currentCity.label}
-            className={styles.listSearch}
-          />
+          <SearchHeader curCity={this.label} className={styles.listSearch} />
         </Flex>
-        <Filter searchHouseList={this.searchHouseList} />
+        <Sticky>
+          <Filter onFilter={this.onFilter} />
+        </Sticky>
         {this.renderHouseList()}
       </>
     )

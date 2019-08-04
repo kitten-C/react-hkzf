@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 
+import {Spring} from 'react-spring/renderprops'
+
 import {API, getCurrentCity} from '../../../../utils/index'
 
 import FilterTitle from '../FilterTitle'
@@ -34,6 +36,8 @@ export default class Filter extends Component {
 
     this.changeTitleSelected(type, boolean)
 
+    this.htmlBody.classList.add(styles.hidden)
+
     this.setState({
       openType: type
     })
@@ -52,9 +56,10 @@ export default class Filter extends Component {
   // 修改默认值后高亮
   changeDefault = (openType = this.state.openType) => {
     const {defaultFilterResult: newFilterResult} = this.state
-    if (!newFilterResult[openType]) {
-      return console.log(newFilterResult)
-    }
+    // if (!newFilterResult[openType]) {
+    //   return console.log(newFilterResult)
+    // }
+    if (!newFilterResult[openType]) return
     let result = newFilterResult[openType].every(
       (v, i) =>
         newFilterResult[openType][i] === defaultFilterResult[openType][i]
@@ -65,13 +70,33 @@ export default class Filter extends Component {
 
   // 打开遮罩层
   openMask = () => {
+    // console.log(this.htmlBody)
     const {openType} = this.state
-    if (openType === 'more' || openType === '') return
-    return <div className={styles.mask} onClick={this.closeMask} />
+    // if (openType === 'more' || openType === '') return
+    return (
+      <Spring
+        from={{opacity: 0}}
+        to={{opacity: openType === 'more' || openType === '' ? 0 : 1}}
+      >
+        {props => {
+          console.log(props.opacity)
+          if (props.opacity === 0) return null
+          return (
+            <div
+              className={styles.mask}
+              style={props}
+              onClick={this.closeMask}
+            />
+          )
+        }}
+      </Spring>
+    )
   }
 
   // 关闭遮罩层
   closeMask = () => {
+    console.log(1)
+    this.htmlBody.classList.remove(styles.hidden)
     this.changeDefault()
     this.setState({
       openType: ''
@@ -87,7 +112,8 @@ export default class Filter extends Component {
   onSave = async v => {
     await this.changeDefaultFilterResult(v)
     this.closeMask()
-    this.props.searchHouseList(this.state.defaultFilterResult)
+    this.props.onFilter(this.state.defaultFilterResult)
+    window.scroll(0, 0)
   }
 
   // 修改默认值
@@ -106,6 +132,7 @@ export default class Filter extends Component {
     const {openType, defaultFilterResult, filterData} = this.state
     const {area, subway, rentType, price} = filterData
     if (openType === '' || openType === 'more') return
+
     let data = []
     let cols = 1
     switch (openType) {
@@ -124,15 +151,20 @@ export default class Filter extends Component {
         break
     }
     return (
-      <FilterPicker
-        key={this.state.openType}
-        data={data}
-        cols={cols}
-        defaultValue={defaultFilterResult[openType]}
-        onSave={this.onSave}
-        changeDefault={this.changeDefault}
-        onCancel={this.onCancel}
-      />
+      <Spring from={{height: 0}} to={{height: 309}}>
+        {props => (
+          <FilterPicker
+            key={this.state.openType}
+            data={data}
+            cols={cols}
+            defaultValue={defaultFilterResult[openType]}
+            onSave={this.onSave}
+            changeDefault={this.changeDefault}
+            onCancel={this.onCancel}
+            // style={props}
+          />
+        )}
+      </Spring>
     )
   }
 
@@ -170,7 +202,8 @@ export default class Filter extends Component {
 
   componentDidMount() {
     // 把筛选数据发送给hoseList
-    this.props.searchHouseList(this.state.defaultFilterResult)
+    this.htmlBody = document.body
+    // this.props.onFilter(this.state.defaultFilterResult)
     this.getFilterData()
   }
 
@@ -187,6 +220,7 @@ export default class Filter extends Component {
             titleSelectedStatus={this.state.titleSelectedStatus}
             clickTitle={this.clickTitle}
           />
+
           {/* 前三个菜单对应的内容： */}
           {this.renderPicker()}
 
