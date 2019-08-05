@@ -44,3 +44,4 @@ export {getCurrentCity, getCity, setCity}
 export {BASE_URL} from './url'
 export {API} from './api'
 export {loading, closeLoading} from './loding'
+export {getToken, setToken, isAuth, clearToken} from './token'
