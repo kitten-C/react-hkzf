@@ -37,6 +37,7 @@ class Login extends Component {
     })
     console.log(res)
     if (res.data.status === 200) {
+      console.log()
       setToken(res.data.body.token)
       this.props.history.go(-1)
     }
@@ -124,6 +125,8 @@ Login = withFormik({
     const res = await API.post('/user/login', value)
     if (res.data.status === 200) {
       setToken(res.data.body.token)
+      props.history.location.state &&
+        props.history.replace(props.history.location.state.from)
       props.history.go(-1)
     } else {
       Toast.info('账号或密码错误')

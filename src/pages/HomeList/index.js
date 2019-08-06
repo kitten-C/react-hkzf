@@ -74,7 +74,7 @@ export default class extends React.Component {
   searchHouseList = async (start, end) => {
     // console.log(start, end)
     // 加载提示
-    // Toast.loading('Loading...', 0)
+    Toast.loading('Loading...', 0, null, false)
 
     const filterData = this.handleFilterData(start, end)
     const res = await API.get('/houses', {

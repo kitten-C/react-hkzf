@@ -31,18 +31,11 @@ export default class Profile extends Component {
     userMessage: {}
   }
   componentDidMount() {
-    console.log(!isAuth())
     if (!isAuth()) return
-    console.log(1)
     this.getUserMessage()
   }
   getUserMessage = async () => {
-    const res = await API.get('/user', {
-      headers: {
-        authorization: getToken()
-      }
-    })
-    console.log(res)
+    const res = await API.get('/user')
     if (res.data.status !== 200) return
     this.setState({
       isAuth: true,
@@ -71,10 +64,6 @@ export default class Profile extends Component {
     const {isAuth, userMessage} = this.state
     const {history} = this.props
     const {avatar, nickname} = userMessage
-    console.log(isAuth)
-    console.log(
-      BASE_URL + (!userMessage.avatar ? DEFAULT_AVATAR : userMessage.avatar)
-    )
     return (
       <div className={styles.root}>
         {/* 个人信息 */}
@@ -88,7 +77,7 @@ export default class Profile extends Component {
             <div className={styles.myIcon}>
               <img
                 className={styles.avatar}
-                src={BASE_URL + (!avatar ? DEFAULT_AVATAR : avatar)}
+                src={BASE_URL + (!isAuth ? DEFAULT_AVATAR : avatar)}
                 alt="icon"
               />
             </div>
